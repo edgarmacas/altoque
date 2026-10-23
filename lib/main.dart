@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'controllers/auth_controller.dart';
+import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'services/api_client.dart';
 import 'utils/reporte_errores.dart';
@@ -37,62 +38,44 @@ class AlToqueApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFFF8FAFC),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF0D47A1), // Azul institucional
+          seedColor: const Color(0xFF1DCED8),
+          primary: const Color(0xFF0E8E98), // Turquesa profundo vibrante
+          secondary: const Color(0xFFFF467A), // Coral enérgico
+          tertiary: const Color(0xFF1DCED8), // Cyan puro
+          surface: const Color(0xFFF8FAFC),
           brightness: Brightness.light,
         ),
         appBarTheme: const AppBarTheme(
           centerTitle: false,
           elevation: 0,
+          backgroundColor: Color(0xFFF8FAFC),
+          surfaceTintColor: Colors.transparent,
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Color(0xFFFF467A),
+          foregroundColor: Colors.white,
+          elevation: 3,
+        ),
+        navigationBarTheme: NavigationBarThemeData(
+          backgroundColor: Colors.white,
+          indicatorColor: const Color(0xFF1DCED8).withValues(alpha: 0.22),
+          surfaceTintColor: Colors.transparent,
+          elevation: 1,
+        ),
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            backgroundColor: const Color(0xFF0E8E98),
+            foregroundColor: Colors.white,
+          ),
         ),
       ),
       home: Obx(() {
         if (!auth.estaAutenticado) {
           return const LoginScreen();
         }
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('AlToque'),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.logout),
-                tooltip: 'Cerrar sesión',
-                onPressed: auth.cerrarSesion,
-              ),
-            ],
-          ),
-          body: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.check_circle_outline, size: 64, color: Colors.green),
-                  const SizedBox(height: 16),
-                  Text(
-                    '¡Sesión iniciada!',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Usuario: ${auth.emailActual.value}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[700],
-                        ),
-                  ),
-                  const SizedBox(height: 24),
-                  FilledButton.icon(
-                    onPressed: auth.cerrarSesion,
-                    icon: const Icon(Icons.logout),
-                    label: const Text('Cerrar sesión'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
+        return const HomeScreen();
       }),
     );
   }
