@@ -8,6 +8,7 @@ import 'package:altoque/controllers/tareas_controller.dart';
 import 'package:altoque/models/tarea.dart';
 import 'package:altoque/models/usuario.dart';
 import 'package:altoque/repositories/tareas_repository.dart';
+import 'package:altoque/screens/destacadas_screen.dart';
 import 'package:altoque/screens/home_screen.dart';
 import 'package:altoque/screens/tareas_screen.dart';
 import 'package:altoque/services/api_client.dart';
@@ -15,6 +16,8 @@ import 'package:altoque/widgets/tarea_card.dart';
 
 class MockTareasRepository implements TareasRepository {
   List<Tarea> listaPrueba;
+  @override
+  final RxBool desdeCache = false.obs;
 
   MockTareasRepository(this.listaPrueba);
 
@@ -169,6 +172,23 @@ void main() {
       expect(find.textContaining('Pendientes'), findsOneWidget);
       expect(find.text('Renovar cédula en Registro Civil'), findsOneWidget);
     });
+    testWidgets('DestacadasScreen muestra tareas destacadas', (tester) async {
+      final repo = MockTareasRepository([tareaDemo]);
+      final controller = Get.put<TareasController>(TareasController(repository: repo));
+      controller.destacadas.assignAll([tareaDemo]);
+
+      await tester.pumpWidget(
+        const GetMaterialApp(
+          home: DestacadasScreen(),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('Tareas destacadas'), findsOneWidget);
+      expect(find.text('1 tareas guardadas localmente'), findsOneWidget);
+      expect(find.text('Renovar cédula en Registro Civil'), findsOneWidget);
+    });
+
     testWidgets('HomeScreen muestra las 4 pestañas de navegación', (tester) async {
       final repo = MockTareasRepository([tareaDemo]);
       Get.put<TareasController>(TareasController(repository: repo));

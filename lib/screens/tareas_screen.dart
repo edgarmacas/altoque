@@ -158,6 +158,23 @@ class TareasScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
+          Obx(() {
+            if (!controller.desdeCache) return const SizedBox.shrink();
+            return MaterialBanner(
+              leading: const Icon(Icons.cloud_off, color: Colors.amber),
+              backgroundColor: Colors.amber.shade50,
+              content: const Text(
+                'Sin conexión — mostrando tareas guardadas localmente.',
+                style: TextStyle(fontSize: 13),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: controller.cargarTareas,
+                  child: const Text('Reintentar'),
+                ),
+              ],
+            );
+          }),
           const SizedBox(height: 8),
           _buildFiltros(controller),
           const Divider(height: 1, thickness: 1),
@@ -199,11 +216,13 @@ class TareasScreen extends StatelessWidget {
                   itemCount: filtradas.length,
                   itemBuilder: (context, index) {
                     final t = filtradas[index];
-                    return TareaCard(
-                      tarea: t,
-                      onAvanzarEstado: () => controller.avanzarEstado(t),
-                      onEliminar: () => _confirmarEliminar(context, controller, t),
-                    );
+                    return Obx(() => TareaCard(
+                          tarea: t,
+                          esDestacada: controller.esDestacada(t.id),
+                          onToggleDestacada: () => controller.toggleDestacada(t),
+                          onAvanzarEstado: () => controller.avanzarEstado(t),
+                          onEliminar: () => _confirmarEliminar(context, controller, t),
+                        ));
                   },
                 ),
               );

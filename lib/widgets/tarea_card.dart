@@ -7,12 +7,16 @@ class TareaCard extends StatelessWidget {
   final Tarea tarea;
   final VoidCallback onAvanzarEstado;
   final VoidCallback onEliminar;
+  final bool esDestacada;
+  final VoidCallback? onToggleDestacada;
 
   const TareaCard({
     super.key,
     required this.tarea,
     required this.onAvanzarEstado,
     required this.onEliminar,
+    this.esDestacada = false,
+    this.onToggleDestacada,
   });
 
   String _formatearFecha(DateTime fecha) {
@@ -156,6 +160,16 @@ class TareaCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (onToggleDestacada != null)
+                  IconButton(
+                    icon: Icon(
+                      esDestacada ? Icons.star_rounded : Icons.star_outline_rounded,
+                      size: 22,
+                      color: esDestacada ? Colors.amber.shade700 : Colors.grey.shade400,
+                    ),
+                    tooltip: esDestacada ? 'Quitar de destacadas' : 'Destacar tarea',
+                    onPressed: onToggleDestacada,
+                  ),
                 PopupMenuButton<String>(
                   icon: Icon(Icons.more_vert, size: 20, color: Colors.grey.shade600),
                   onSelected: (val) {
