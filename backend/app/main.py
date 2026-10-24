@@ -10,6 +10,7 @@ from app.config import settings
 from app.database import Base, engine
 from app.routers.usuarios import router as usuarios_router
 from app.routers.tareas import router as tareas_router
+from app.routers.asistente import router as asistente_router
 from app.mcp.server import mcp_server
 
 logger = logging.getLogger(__name__)
@@ -53,6 +54,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 # Inclusión de routers REST
 app.include_router(usuarios_router)
 app.include_router(tareas_router)
+app.include_router(asistente_router)
 
 # Montaje de transporte MCP streamable-http
 app.mount("/mcp", mcp_server.streamable_http_app())

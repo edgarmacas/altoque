@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     MCP_USER_EMAIL: str = "usuario@ejemplo.com"
     APP_NAME: str = "Sistema de Gestión de Tareas"
+    GEMINI_API_KEY: str | None = None
 
 
     model_config = SettingsConfigDict(
