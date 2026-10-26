@@ -1,0 +1,60 @@
+# Entrega continua (CD): Compilación y publicación del APK de Release para AlToque.
+#
+# Se dispara automáticamente al crear una etiqueta de versión que empiece con "v" (ej. v1.0.0)
+# o manualmente desde la pestaña Actions en GitHub.
+
+name: Release APK
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    name: Compilar y Publicar APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Instalar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Instalar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Descargar dependencias
+        run: flutter pub get
+
+      - name: Analizar código
+        run: flutter analyze --no-fatal-infos
+
+      - name: Ejecutar pruebas
+        run: flutter test
+
+      - name: Compilar APK de Release
+        run: flutter build apk --release --dart-define=API_BASE_URL=${{ vars.API_BASE_URL || 'http://10.0.2.2:8000' }}
+
+      - name: Guardar APK como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: altoque-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Publicar Release en GitHub con el APK adjunto
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/app/outputs/flutter-apk/app-release.apk
+          generate_release_notes: true
